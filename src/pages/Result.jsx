@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { QuizContext } from '../App';
 
-// Achievement system
 const achievements = [
   {
     id: 'perfect_score',
@@ -51,21 +50,17 @@ function Result() {
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  // Get result data from multiple sources
   useEffect(() => {
     let resultData = null;
 
-    // Priority 1: Data from navigation state
     if (location.state) {
       resultData = location.state;
       console.log('Got result data from navigation state:', resultData);
     }
-    // Priority 2: Data from context (lastResult)
     else if (lastResult) {
       resultData = lastResult;
       console.log('Got result data from context:', resultData);
     }
-    // Priority 3: Data from current quiz if just finished
     else if (currentQuiz && currentQuiz.questions.length > 0) {
       resultData = {
         score: currentQuiz.score,
@@ -82,7 +77,6 @@ function Result() {
       };
       console.log('Generated result data from current quiz:', resultData);
     }
-    // Fallback: Demo data
     else {
       resultData = {
         score: 85,
@@ -105,7 +99,6 @@ function Result() {
 
   const percentage = gameStats ? Math.round((gameStats.correctAnswers / gameStats.total) * 100) : 0;
   
-  // Performance rating
   const getPerformanceRating = () => {
     if (percentage >= 90) return { text: "Outstanding! 🌟", color: "text-yellow-500", bg: "bg-yellow-50" };
     if (percentage >= 80) return { text: "Excellent! 🎉", color: "text-green-500", bg: "bg-green-50" };
@@ -115,7 +108,6 @@ function Result() {
     return { text: "Practice More! 📚", color: "text-red-500", bg: "bg-red-50" };
   };
 
-  // Check achievements
   useEffect(() => {
     if (!gameStats) return;
     
@@ -132,9 +124,8 @@ function Result() {
 
   const rating = getPerformanceRating();
 
-  // Navigation functions with real routing
   const handlePlayAgain = () => {
-    resetQuiz(); // Clear previous quiz data
+    resetQuiz(); 
     navigate('/quiz', { 
       state: { 
         category: gameStats?.category === 'Mixed' ? null : gameStats?.category,

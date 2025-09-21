@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// In-memory leaderboard storage (replaces localStorage for Claude.ai compatibility)
 let leaderboardData = [
   {
     id: 1,
@@ -89,27 +88,22 @@ function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
-  const [viewMode, setViewMode] = useState('overall'); // overall, monthly, weekly
+  const [viewMode, setViewMode] = useState('overall');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load leaderboard data
   useEffect(() => {
     setIsLoading(true);
-    // Simulate loading
     setTimeout(() => {
       let filteredData = [...leaderboardData];
       
-      // Filter by category
       if (selectedCategory !== 'all') {
         filteredData = filteredData.filter(entry => entry.category === selectedCategory);
       }
       
-      // Filter by difficulty
       if (selectedDifficulty !== 'all') {
         filteredData = filteredData.filter(entry => entry.difficulty === selectedDifficulty);
       }
       
-      // Sort by score (descending)
       filteredData.sort((a, b) => b.score - a.score);
       
       setLeaderboard(filteredData);
@@ -117,7 +111,6 @@ function Leaderboard() {
     }, 1000);
   }, [selectedCategory, selectedDifficulty, viewMode]);
 
-  // Add new score (mock function for demo)
   const addMockScore = () => {
     const newScore = {
       id: Date.now(),

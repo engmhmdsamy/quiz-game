@@ -1,20 +1,16 @@
-// App.jsx - with Real Database Connection
 import { useState, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Import the questions database
-import questionsDatabase, { 
-  getRandomQuestions, 
-  getQuestionsByDifficulty, 
+import questionsDatabase, {
+  getRandomQuestions,
+  getQuestionsByDifficulty,
   getAllCategories,
-  getDifficulties 
+  getDifficulties
 } from './data/questions';
 
-// Context for global state management
 export const QuizContext = createContext();
 
-// Custom hook to use quiz context
 export const useQuiz = () => {
   const context = useContext(QuizContext);
   if (!context) {
@@ -23,18 +19,15 @@ export const useQuiz = () => {
   return context;
 };
 
-// Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import Leaderboard from './pages/Leaderboard'; 
+import Leaderboard from './pages/Leaderboard';
 import Result from './pages/Result';
 import Quiz from './pages/Quiz';
 
 function App() {
-  // Global state with quiz management
   const [quizState, setQuizState] = useState({
-    // User data
     user: {
       name: 'Player',
       gamesPlayed: 0,
@@ -43,16 +36,14 @@ function App() {
       achievements: [],
       rank: 0
     },
-    
-    // Current game settings
+
     gameSettings: {
       category: null,
       difficulty: null,
       playerName: 'Player',
       questionCount: 10
     },
-    
-    // Current quiz session
+
     currentQuiz: {
       questions: [],
       currentIndex: 0,
@@ -72,10 +63,8 @@ function App() {
       }
     },
 
-    // Results data
     lastResult: null,
-    
-    // Global data
+
     allCategories: getAllCategories(),
     allDifficulties: getDifficulties(),
     totalQuestions: Object.values(questionsDatabase).reduce((total, category) => {
@@ -85,7 +74,6 @@ function App() {
     }, 0)
   });
 
-  // In-memory leaderboard storage (replaces localStorage for Claude.ai compatibility)
   const [leaderboard, setLeaderboard] = useState([
     {
       id: 1,
@@ -125,19 +113,14 @@ function App() {
     }
   ]);
 
-  // Quiz management functions
   const quizActions = {
-    // Start a new quiz
     startQuiz: (settings) => {
       let selectedQuestions = [];
-      
-      // Get questions based on settings
+
       if (settings.category && settings.difficulty) {
-        // Specific category and difficulty
         selectedQuestions = getQuestionsByDifficulty(settings.category, settings.difficulty);
         console.log(`Loading ${settings.difficulty} ${settings.category} questions:`, selectedQuestions.length);
       } else if (settings.category) {
-        // Specific category, all difficulties
         const categoryData = questionsDatabase[settings.category];
         if (categoryData) {
           selectedQuestions = [
@@ -148,15 +131,13 @@ function App() {
         }
         console.log(`Loading all ${settings.category} questions:`, selectedQuestions.length);
       } else {
-        // Random questions from all categories
         selectedQuestions = getRandomQuestions(settings.questionCount || 10);
         console.log(`Loading random questions:`, selectedQuestions.length);
       }
 
-      // Shuffle questions
       const shuffledQuestions = [...selectedQuestions].sort(() => Math.random() - 0.5);
       const quizQuestions = shuffledQuestions.slice(0, settings.questionCount || 10);
-      
+
       console.log('Final quiz questions:', quizQuestions);
 
       setQuizState(prev => ({
@@ -186,7 +167,6 @@ function App() {
       return quizQuestions;
     },
 
-    // Answer a question
     answerQuestion: (selectedAnswer, timeLeft) => {
       setQuizState(prev => {
         const currentQuestion = prev.currentQuiz.questions[prev.currentQuiz.currentIndex];
@@ -201,7 +181,7 @@ function App() {
           totalPoints: prev.currentQuiz.stats.totalPoints + points,
           streak: isCorrect ? prev.currentQuiz.stats.streak + 1 : 0,
           maxStreak: Math.max(
-            prev.currentQuiz.stats.maxStreak, 
+            prev.currentQuiz.stats.maxStreak,
             isCorrect ? prev.currentQuiz.stats.streak + 1 : prev.currentQuiz.stats.streak
           ),
           timeBonus: prev.currentQuiz.stats.timeBonus + timeBonus
@@ -228,7 +208,6 @@ function App() {
       });
     },
 
-    // Move to next question
     nextQuestion: () => {
       setQuizState(prev => ({
         ...prev,
@@ -240,7 +219,6 @@ function App() {
       }));
     },
 
-    // End quiz and save results
     endQuiz: () => {
       setQuizState(prev => {
         const finalStats = {
@@ -257,7 +235,6 @@ function App() {
           date: new Date().toISOString().split('T')[0]
         };
 
-        // Add to leaderboard
         const newLeaderboardEntry = {
           id: Date.now(),
           name: prev.gameSettings.playerName || prev.user.name,
@@ -268,13 +245,13 @@ function App() {
           streak: finalStats.maxStreak,
           timeBonus: finalStats.timeBonus,
           date: new Date().toISOString().split('T')[0],
-          achievements: [] // Will be calculated based on performance
+          achievements: [] 
         };
 
-        setLeaderboard(prevLeaderboard => 
+        setLeaderboard(prevLeaderboard =>
           [...prevLeaderboard, newLeaderboardEntry]
             .sort((a, b) => b.score - a.score)
-            .slice(0, 20) // Keep top 20
+            .slice(0, 20) 
         );
 
         return {
@@ -295,7 +272,6 @@ function App() {
       });
     },
 
-    // Reset quiz
     resetQuiz: () => {
       setQuizState(prev => ({
         ...prev,
@@ -320,7 +296,6 @@ function App() {
       }));
     },
 
-    // Update user data
     updateUser: (userData) => {
       setQuizState(prev => ({
         ...prev,
@@ -329,17 +304,11 @@ function App() {
     }
   };
 
-  // Context value with all data and actions
   const contextValue = {
-    // State
     ...quizState,
     leaderboard,
-    
-    // Actions
     ...quizActions,
     setLeaderboard,
-    
-    // Utility functions
     getRandomQuestions,
     getQuestionsByDifficulty,
     questionsDatabase
@@ -373,7 +342,6 @@ function App() {
           <Footer />
         </div>
 
-        {/* Debug Panel (remove in production) */}
         {process.env.NODE_ENV === 'development' && (
           <div className="fixed bottom-4 left-4 bg-black bg-opacity-75 text-white p-4 rounded-lg text-xs max-w-xs z-50">
             <div><strong>Debug Info:</strong></div>

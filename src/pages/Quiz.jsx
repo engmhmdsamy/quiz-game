@@ -17,13 +17,11 @@ function Quiz() {
     questionsDatabase 
   } = useContext(QuizContext);
 
-  // Local state for quiz interface
   const [timeLeft, setTimeLeft] = useState(30);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Get game settings from location state or use defaults
   const quizSettings = location.state || {
     category: 'programming',
     difficulty: 'easy',
@@ -31,12 +29,10 @@ function Quiz() {
     questionCount: 10
   };
 
-  // Initialize quiz when component mounts
   useEffect(() => {
     console.log('Quiz component mounted with settings:', quizSettings);
     setIsLoading(true);
     
-    // Start quiz with settings
     const questions = startQuiz(quizSettings);
     
     setTimeout(() => {
@@ -44,7 +40,6 @@ function Quiz() {
     }, 1000);
   }, []);
 
-  // Timer effect
   useEffect(() => {
     if (timeLeft > 0 && !showFeedback && currentQuiz.isActive) {
       timerRef.current = setTimeout(() => {
@@ -54,13 +49,12 @@ function Quiz() {
         }
       }, 1000);
     } else if (timeLeft === 0 && !showFeedback && currentQuiz.isActive) {
-      handleAnswer(null); // Auto-submit when time runs out
+      handleAnswer(null); 
     }
     
     return () => clearTimeout(timerRef.current);
   }, [timeLeft, showFeedback, currentQuiz.isActive]);
 
-  // Sound effects
   const playSound = (type) => {
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -108,10 +102,8 @@ function Quiz() {
       playSound('wrong');
     }
     
-    // Update quiz state
     answerQuestion(selectedOption, timeLeft);
     
-    // Show feedback for 2 seconds, then move to next question
     setTimeout(() => {
       const nextIndex = currentQuiz.currentIndex + 1;
       if (nextIndex < currentQuiz.questions.length) {
@@ -120,7 +112,6 @@ function Quiz() {
         setSelectedAnswer(null);
         setShowFeedback(false);
       } else {
-        // Quiz finished
         endQuiz();
         playSound('finish');
         navigate('/result');
@@ -128,7 +119,6 @@ function Quiz() {
     }, 2500);
   };
 
-  // Loading state
   if (isLoading || currentQuiz.questions.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-blue-50 to-indigo-100">
@@ -144,7 +134,6 @@ function Quiz() {
     );
   }
 
-  // Check if quiz is active and has questions
   if (!currentQuiz.isActive || currentQuiz.questions.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-blue-50 to-indigo-100">

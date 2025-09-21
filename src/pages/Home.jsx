@@ -47,7 +47,7 @@ const difficulties = [
 function Home() {
   const navigate = useNavigate();
   const { user, questionsDatabase, totalQuestions } = useContext(QuizContext);
-  
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState('easy');
   const [playerName, setPlayerName] = useState(user?.name || '');
@@ -60,7 +60,7 @@ function Home() {
       playerName: playerName.trim() || 'Anonymous Player',
       questionCount: questionCount
     };
-    
+
     console.log('Starting quiz with settings:', gameSettings);
     navigate('/quiz', { state: gameSettings });
   };
@@ -72,22 +72,21 @@ function Home() {
       playerName: playerName.trim() || 'Anonymous Player',
       questionCount: questionCount
     };
-    
+
     console.log('Starting random quiz with settings:', gameSettings);
     navigate('/quiz', { state: gameSettings });
   };
 
-  // Get available questions count for current selection
   const getQuestionCount = () => {
     if (!selectedCategory) return totalQuestions;
-    
+
     const categoryData = questionsDatabase[selectedCategory];
     if (!categoryData) return 0;
-    
+
     if (selectedDifficulty) {
       return categoryData[selectedDifficulty]?.length || 0;
     }
-    
+
     return Object.values(categoryData).reduce((total, questions) => total + questions.length, 0);
   };
 
@@ -96,7 +95,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-cyan-100">
       <div className="container mx-auto px-6 py-12">
-        
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -50 }}
@@ -105,10 +104,10 @@ function Home() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent mb-4">
-             Ultimate Quiz Game
+            Ultimate Quiz Game
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Challenge your knowledge across multiple categories and difficulty levels. 
+            Challenge your knowledge across multiple categories and difficulty levels.
             Compete with friends and climb the leaderboard!
           </p>
         </motion.div>
@@ -211,11 +210,10 @@ function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`cursor-pointer transform transition-all duration-300 hover:scale-105 ${
-                  selectedCategory === category.id
+                className={`cursor-pointer transform transition-all duration-300 hover:scale-105 ${selectedCategory === category.id
                     ? 'ring-4 ring-purple-400 shadow-2xl scale-105'
                     : 'hover:shadow-xl'
-                }`}
+                  }`}
               >
                 <div className={`bg-gradient-to-br ${category.color} rounded-2xl p-6 text-white relative overflow-hidden`}>
                   <div className="absolute -right-4 -top-4 text-6xl opacity-20">
@@ -264,11 +262,10 @@ function Home() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedDifficulty(diff.id)}
-                  className={`px-8 py-6 rounded-2xl font-bold text-white transition-all duration-300 shadow-lg min-w-[150px] ${
-                    selectedDifficulty === diff.id
+                  className={`px-8 py-6 rounded-2xl font-bold text-white transition-all duration-300 shadow-lg min-w-[150px] ${selectedDifficulty === diff.id
                       ? `${diff.color} ring-4 ring-white scale-110`
                       : `${diff.color} opacity-70 hover:opacity-100`
-                  }`}
+                    }`}
                 >
                   <div className="text-3xl mb-2">{diff.icon}</div>
                   <div className="text-lg">{diff.name}</div>
@@ -276,7 +273,7 @@ function Home() {
                 </motion.button>
               ))}
             </div>
-            
+
             {/* Questions Available */}
             <div className="text-center mt-4">
               <span className="text-gray-600">
@@ -299,11 +296,10 @@ function Home() {
             whileTap={{ scale: 0.95 }}
             onClick={handleStartQuiz}
             disabled={!selectedCategory || availableQuestions === 0}
-            className={`px-10 py-4 rounded-2xl font-bold text-xl transition-all duration-300 shadow-xl ${
-              selectedCategory && availableQuestions > 0
+            className={`px-10 py-4 rounded-2xl font-bold text-xl transition-all duration-300 shadow-xl ${selectedCategory && availableQuestions > 0
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transform hover:shadow-2xl'
                 : 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            }`}
+              }`}
           >
             {selectedCategory && availableQuestions > 0 ? (
               <>
@@ -348,19 +344,19 @@ function Home() {
             <div className="text-2xl font-bold text-purple-600">{totalQuestions}+</div>
             <div className="text-gray-600">Total Questions</div>
           </div>
-          
+
           <div className="bg-white rounded-xl p-6 shadow-lg text-center border border-gray-200">
             <div className="text-3xl mb-2">🏆</div>
             <div className="text-2xl font-bold text-green-600">{categories.length}</div>
             <div className="text-gray-600">Categories</div>
           </div>
-          
+
           <div className="bg-white rounded-xl p-6 shadow-lg text-center border border-gray-200">
             <div className="text-3xl mb-2">⚡</div>
             <div className="text-2xl font-bold text-orange-600">{difficulties.length}</div>
             <div className="text-gray-600">Difficulty Levels</div>
           </div>
-          
+
           <div className="bg-white rounded-xl p-6 shadow-lg text-center border border-gray-200">
             <div className="text-3xl mb-2">🎯</div>
             <div className="text-2xl font-bold text-blue-600">∞</div>

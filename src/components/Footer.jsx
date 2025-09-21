@@ -218,8 +218,8 @@ function Footer() {
                         <span>{stat.icon}</span>
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-white">{stat.value}</div>
-                        <div className="text-sm text-gray-300">{stat.label}</div>
+                        <div className="text-2xl font-bold text-purple-900">{stat.value}</div>
+                        <div className="text-sm text-black">{stat.label}</div>
                       </div>
                     </div>
                   </motion.div>
